@@ -1,0 +1,14 @@
+{
+  "name": "jev-agent-kit",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=24 <25" },
+  "bin": { "jev-kit": "./dist/cli/main.js" },
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" }, "./schema": "./schemas/jev-kit.config.schema.json" },
+  "types": "./dist/index.d.ts",
+  "files": ["dist", "schemas", "examples", "README.md", "CHANGELOG.md"],
+  "scripts": { "build": "tsc -p tsconfig.json", "typecheck": "tsc -p tsconfig.json --noEmit", "test": "npm run build && node --test tests/*.test.mjs", "pack:check": "node tests/pack-check.mjs", "check": "npm run typecheck && npm test && npm run pack:check" },
+  "dependencies": { "ajv": "8.20.0" },
+  "devDependencies": { "typescript": "5.9.3", "@types/node": "24.13.6" }
+}

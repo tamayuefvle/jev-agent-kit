@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/tamayuefvle/jev-agent-kit/blob/main/schemas/jev-kit.config.schema.json",
+  "type": "object", "additionalProperties": false,
+  "required": ["schemaVersion", "projectId"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "projectId": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$" },
+    "provider": { "type": "object", "default": {}, "additionalProperties": false, "properties": {
+      "model": { "type": "string", "pattern": "^\\S+$", "default": "jev-latest" },
+      "apiKeyEnv": { "type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_]*$", "default": "TYPESAFE_API_KEY" }
+    } },
+    "runtime": { "type": "object", "default": {}, "additionalProperties": false, "properties": {
+      "requestTimeoutMs": { "type": "integer", "minimum": 1000, "maximum": 120000, "default": 10000 },
+      "totalTimeoutMs": { "type": "integer", "minimum": 1000, "maximum": 120000, "default": 30000 },
+      "maxRetries": { "type": "integer", "minimum": 0, "maximum": 2, "default": 0 },
+      "maxInputBytes": { "type": "integer", "minimum": 1024, "maximum": 1048576, "default": 262144 }
+    } },
+    "telemetry": { "type": "object", "default": {}, "additionalProperties": false, "properties": {
+      "enabled": { "type": "boolean", "default": false },
+      "path": { "type": "string", "minLength": 1, "default": ".jev-kit/events.jsonl" }
+    } }
+  }
+}
