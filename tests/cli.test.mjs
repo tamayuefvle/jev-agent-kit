@@ -4,6 +4,7 @@ import { spawnSync } from 'node:child_process';
 import { mkdtemp, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { mixed } from './fixtures.mjs';
 const cli = resolve('dist/cli/main.js');
 const secret = 'very-private-api-key';
@@ -56,7 +57,7 @@ test('CLI maps mocked provider status and contract errors to exit codes', async 
   const preload = join(root, 'mock.mjs');
   await writeFile(preload, `globalThis.fetch = async () => new Response('synthetic provider body', { status: Number(process.env.MOCK_STATUS) });`);
   for (const [status, expectedExit, code] of [[401,3,'AUTH_REJECTED'],[422,4,'PROVIDER_INPUT_REJECTED'],[503,4,'PROVIDER_HTTP_ERROR'],[200,5,'PROVIDER_CONTRACT_ERROR']]) {
-    const result = spawnSync(process.execPath, ['--import', preload, cli, 'evaluate', '--input', 'input.json'], { cwd: root, encoding: 'utf8', env: { ...process.env, TYPESAFE_API_KEY: secret, MOCK_STATUS: String(status) } });
+    const result = spawnSync(process.execPath, ['--import', pathToFileURL(preload).href, cli, 'evaluate', '--input', 'input.json'], { cwd: root, encoding: 'utf8', env: { ...process.env, TYPESAFE_API_KEY: secret, MOCK_STATUS: String(status) } });
     assert.equal(result.status, expectedExit);
     assert.equal(JSON.parse(result.stdout).error.code, code);
     assert.equal(result.stdout.trim().split('\n').length, 1);
