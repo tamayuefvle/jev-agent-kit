@@ -17,4 +17,4 @@ Run `npm run check` on Node 24 to reproduce the offline checks. The automated su
 | A11 | PASS | `tests/cli.test.mjs`, `tests/pack-check.mjs` |
 | A12 | NOT_RUN | `npm run smoke:live` is separate and guarded. No purpose-supplied API key; no live request was made |
 
-Linux is verified locally. The Windows CI job exists but remains unverified until it runs in GitHub Actions.
+Linux passed locally and in [GitHub Actions run 35865126454](https://github.com/tamayuefvle/jev-agent-kit/actions/runs/35865126454). Windows passed in the same run. Live API behavior remains unverified.
