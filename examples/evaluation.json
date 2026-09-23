@@ -1,0 +1,8 @@
+{
+  "state": "A synthetic checkout error appears after submitting the form.",
+  "questions": {
+    "needs_investigation": { "type": "noul", "instructions": "Is the cause still unknown?" },
+    "team": { "type": "choice", "instructions": "Which team should inspect this?", "criteria": { "frontend": "Browser form behavior", "backend": "Server request handling" } },
+    "impact": { "type": "score", "instructions": "Rate the impact", "criteria": ["No user impact", "Some users affected", "All users blocked"] }
+  }
+}
