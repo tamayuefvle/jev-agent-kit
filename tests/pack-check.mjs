@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
-import { mkdtemp, mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 const npmCli = process.env.npm_execpath;
@@ -12,6 +12,7 @@ assert.ok(item);
 const files = item.files.map(file => file.path);
 for (const required of ['dist/index.js', 'dist/index.d.ts', 'dist/cli/main.js', 'schemas/jev-kit.config.schema.json', 'README.md', 'examples/evaluation.json']) assert.ok(files.includes(required), required);
 for (const forbidden of ['.env', 'node_modules', '.jev-kit/events.jsonl']) assert.ok(!files.includes(forbidden));
+assert.ok(files.every(file => /^(dist|schemas|examples)\//.test(file) || ['README.md', 'CHANGELOG.md', 'package.json'].includes(file)));
 const archive = join(root, item.filename);
 for (const [name, projectId] of [['first project', 'alpha'], ['second project', 'beta']]) {
   const project = join(root, name);
@@ -22,13 +23,13 @@ for (const [name, projectId] of [['first project', 'alpha'], ['second project', 
   await writeFile(join(project, 'jev-kit.config.json'), JSON.stringify(config));
   const probe = `import {loadConfig,validateConfig,evaluate} from 'jev-agent-kit';\nimport {readFile} from 'node:fs/promises';\nconst result=await loadConfig('jev-kit.config.json'); if(!result.ok||result.config.projectId!==${JSON.stringify(projectId)}) process.exit(2);\nconst schema=JSON.parse(await readFile(new URL(import.meta.resolve('jev-agent-kit/schema')),'utf8')); if(schema.properties.projectId.type!=='string') process.exit(3);\nif(typeof evaluate!=='function'||!validateConfig({schemaVersion:1,projectId:'check'}).ok) process.exit(4);\n`;
   await writeFile(join(project, 'probe.mjs'), probe);
-  execFileSync(process.execPath, ['probe.mjs'], { cwd: project });
+  assert.equal(execFileSync(process.execPath, ['probe.mjs'], { cwd: project, encoding: 'utf8' }), '');
   const command = [npmCli, 'exec', '--offline', '--', 'jev-kit'];
   const result = spawnSync(process.execPath, [...command, 'config', 'validate'], { cwd: project, encoding: 'utf8' });
   assert.equal(result.status, 0);
   assert.equal(JSON.parse(result.stdout).data.projectId, projectId);
-  const dry = spawnSync(process.execPath, [...command, 'evaluate', '--input', '-', '--dry-run'], { cwd: project, input: JSON.stringify({ state: 'synthetic', questions: { yes: { type: 'noul', instructions: 'Is this synthetic?' } } }), encoding: 'utf8' });
+  const dry = spawnSync(process.execPath, [...command, 'evaluate', '--input', 'node_modules/jev-agent-kit/examples/evaluation.json', '--dry-run'], { cwd: project, encoding: 'utf8' });
   assert.equal(dry.status, 0);
-  assert.equal(JSON.parse(dry.stdout).data.questionCount, 1);
+  assert.equal(JSON.parse(dry.stdout).data.questionCount, 3);
 }
 console.log(JSON.stringify({ status: 'PASS', archive: item.filename, projects: 2, files: files.length }));

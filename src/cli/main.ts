@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { createReadStream } from 'node:fs';
-import { open, readFile } from 'node:fs/promises';
+import { open } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { loadConfig, defaultConfig } from '../config/config.js';
 import { prepareInput } from '../contracts/input.js';

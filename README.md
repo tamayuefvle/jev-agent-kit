@@ -28,11 +28,11 @@ npx jev-kit doctor
 
 ## Evaluate an input
 
-Use [examples/evaluation.json](examples/evaluation.json) as a synthetic example:
+The installed package includes [examples/evaluation.json](examples/evaluation.json). From the consuming project, run:
 
 ```sh
-npx jev-kit evaluate --input examples/evaluation.json --dry-run
-npx jev-kit evaluate --input examples/evaluation.json
+npx jev-kit evaluate --input node_modules/jev-agent-kit/examples/evaluation.json --dry-run
+npx jev-kit evaluate --input node_modules/jev-agent-kit/examples/evaluation.json
 ```
 
 The second command calls `https://api.typesafe.ai/v1/systemone` and may incur a charge. Run it only with a key supplied for that purpose. You can pass `--input -` to read one JSON value from stdin. `--input` is required; the CLI never waits on stdin by default. The config path defaults to `./jev-kit.config.json` without parent search. `--input` paths resolve from the current directory, while telemetry paths resolve from the config file's directory.
