@@ -73,4 +73,4 @@ Retries are off by default. If enabled, the kit retries 429, 529, 502, 503, and 
 npm run check
 ```
 
-This runs TypeScript checks, offline tests, build, and `npm pack` installation into two temporary projects. Tests use synthetic data and injected HTTP responses. They do not validate real API access or decision quality. The live smoke status for Phase 1 is `NOT_RUN` because no purpose-supplied key was available. See [docs/acceptance.md](docs/acceptance.md) for the offline evidence.
+This runs TypeScript checks, offline tests, build, and `npm pack` installation into two temporary projects. Tests use synthetic data and injected HTTP responses. They do not validate real API access or decision quality. The live smoke status for Phase 1 is `NOT_RUN` because no purpose-supplied key was available. `npm run smoke:live` is a separate, guarded command. It requires `JEV_LIVE_SMOKE=1` and a purpose-supplied `TYPESAFE_API_KEY`; it sends one synthetic request with all three question types and no retries. It is never part of `npm run check`. See [docs/acceptance.md](docs/acceptance.md) for the offline evidence.

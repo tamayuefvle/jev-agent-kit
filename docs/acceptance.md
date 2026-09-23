@@ -15,6 +15,6 @@ Run `npm run check` on Node 24 to reproduce the offline checks. The automated su
 | A09 | PASS | `tests/pack-check.mjs` |
 | A10 | PASS | `tests/pack-check.mjs`; separate project IDs and install directories |
 | A11 | PASS | `tests/cli.test.mjs`, `tests/pack-check.mjs` |
-| A12 | NOT_RUN | No purpose-supplied API key; no live request was made |
+| A12 | NOT_RUN | `npm run smoke:live` is separate and guarded. No purpose-supplied API key; no live request was made |
 
 Linux is verified locally. The Windows CI job exists but remains unverified until it runs in GitHub Actions.
