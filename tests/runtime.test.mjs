@@ -59,7 +59,7 @@ test('retry statuses, Retry-After HTTP date, and total deadline', async () => {
   assert.equal(deadline.meta.attempts, 1);
 });
 test('request timeout and explicit cancellation', async () => {
-  const evaluate = createEvaluator({ fetch: async (_, init) => new Promise((_, reject) => init.signal.addEventListener('abort', () => reject(new Error('aborted')), { once: true })) });
+  const evaluate = createEvaluator({ timer: callback => { queueMicrotask(callback); return () => undefined; }, fetch: async (_, init) => new Promise((_, reject) => init.signal.addEventListener('abort', () => reject(new Error('aborted')), { once: true })) });
   const timeout = await evaluate(mixed, cfg({ runtime: { requestTimeoutMs: 1000, totalTimeoutMs: 1000 } }));
   assert.equal(timeout.error.code, 'TIMEOUT');
   const controller = new AbortController();

@@ -8,8 +8,8 @@ import { writeTelemetry } from './telemetry.js';
 const endpoint = 'https://api.typesafe.ai/v1/systemone';
 const maxResponseBytes = 1048576;
 export type EvaluateOptions = { signal?: AbortSignal };
-type Dependencies = { fetch: typeof fetch; now: () => number; wallNow: () => number; sleep: (ms: number, signal?: AbortSignal) => Promise<void>; random: () => number };
-const defaults: Dependencies = { fetch: globalThis.fetch, now: () => performance.now(), wallNow: () => Date.now(), sleep: (ms, signal) => sleepTimer(ms, undefined, { signal }).then(() => undefined), random: Math.random };
+type Dependencies = { fetch: typeof fetch; now: () => number; wallNow: () => number; sleep: (ms: number, signal?: AbortSignal) => Promise<void>; random: () => number; timer: (callback: () => void, ms: number) => () => void };
+const defaults: Dependencies = { fetch: globalThis.fetch, now: () => performance.now(), wallNow: () => Date.now(), sleep: (ms, signal) => sleepTimer(ms, undefined, { signal }).then(() => undefined), random: Math.random, timer: (callback, ms) => { const handle = setTimeout(callback, ms); return () => clearTimeout(handle); } };
 const failed = (problem: KitError, start: number, now: () => number, attempts: number): EvaluationResult => ({ ok: false, error: problem, meta: { durationMs: Math.max(0, Math.round(now() - start)), attempts } });
 const cancelled = () => error('CANCELLED', '評価がキャンセルされました。');
 const timedOut = () => error('TIMEOUT', '評価の期限を超えました。');
@@ -68,7 +68,7 @@ async function runRequest(prepared: PreparedInput, config: ValidatedConfig, key:
     const controller = new AbortController();
     const onAbort = () => controller.abort(external?.reason);
     external?.addEventListener('abort', onAbort, { once: true });
-    const timer = setTimeout(() => controller.abort(new Error('deadline')), Math.min(remaining, config.runtime.requestTimeoutMs));
+    const cancelTimer = deps.timer(() => controller.abort(new Error('deadline')), Math.min(remaining, config.runtime.requestTimeoutMs));
     let response: Response;
     try {
       response = await deps.fetch(endpoint, { method: 'POST', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' }, body: prepared.body, redirect: 'error', signal: controller.signal });
@@ -99,7 +99,7 @@ async function runRequest(prepared: PreparedInput, config: ValidatedConfig, key:
       if (controller.signal.aborted || deps.now() >= deadline) return failed(timedOut(), start, deps.now, attempts);
       return failed(error('PROVIDER_NETWORK_ERROR', 'APIとの通信に失敗しました。'), start, deps.now, attempts);
     } finally {
-      clearTimeout(timer);
+      cancelTimer();
       external?.removeEventListener('abort', onAbort);
     }
   }
