@@ -12,7 +12,7 @@ Run `npm run check` on Node 24 to reproduce the offline checks. The automated su
 | A06 | PASS | `tests/runtime.test.mjs` |
 | A07 | PASS | `tests/cli.test.mjs` |
 | A08 | PASS | `tests/runtime.test.mjs` |
-| A09 | PASS | `tests/pack-check.mjs` |
+| A09 | PASS | `tests/pack-check.mjs`; real tarball installs offline with an empty npm cache |
 | A10 | PASS | `tests/pack-check.mjs`; separate project IDs and install directories |
 | A11 | PASS | `tests/cli.test.mjs`, `tests/pack-check.mjs` |
 | A12 | NOT_RUN | `npm run smoke:live` is separate and guarded. No purpose-supplied API key; no live request was made |

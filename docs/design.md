@@ -2,7 +2,7 @@
 
 ## ADR-001: Keep the package independent of host projects
 
-The package exports `loadConfig`, `validateConfig`, and `evaluate`. The CLI owns arguments, streams, output envelopes, and exit codes. The runtime owns one HTTP lifecycle and returns typed results. Host projects decide what to do with answers. The kit does not read their repositories or execute actions.
+The package exports `loadConfig`, `validateConfig`, and `evaluate`. The CLI owns arguments, streams, output envelopes, and exit codes. The runtime owns one HTTP lifecycle and returns typed results. Host projects decide what to do with answers. The kit does not read their repositories or execute actions. The tarball bundles Ajv and its runtime dependencies so the two-project install check works with an empty npm cache.
 
 ## ADR-002: Validate at the boundaries
 

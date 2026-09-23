@@ -12,7 +12,8 @@ assert.ok(item);
 const files = item.files.map(file => file.path);
 for (const required of ['dist/index.js', 'dist/index.d.ts', 'dist/cli/main.js', 'schemas/jev-kit.config.schema.json', 'README.md', 'examples/evaluation.json']) assert.ok(files.includes(required), required);
 for (const forbidden of ['.env', 'node_modules', '.jev-kit/events.jsonl']) assert.ok(!files.includes(forbidden));
-assert.ok(files.every(file => /^(dist|schemas|examples)\//.test(file) || ['README.md', 'CHANGELOG.md', 'package.json'].includes(file)));
+const bundledPackages = new Set(['ajv', 'fast-deep-equal', 'fast-uri', 'json-schema-traverse', 'require-from-string']);
+assert.ok(files.every(file => /^(dist|schemas|examples)\//.test(file) || ['README.md', 'CHANGELOG.md', 'package.json'].includes(file) || (file.startsWith('node_modules/') && bundledPackages.has(file.split('/')[1]))));
 const archive = join(root, item.filename);
 for (const [name, projectId] of [['first project', 'alpha'], ['second project', 'beta']]) {
   const project = join(root, name);

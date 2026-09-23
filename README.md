@@ -2,7 +2,7 @@
 
 `jev-agent-kit` validates typed Jev questions, sends them to TypeSafe System One, and returns typed answers. Phase 1 provides a local CLI and a small Node API. A successful response means the HTTP exchange and answer contract passed validation. It does not approve an action or prove that the answer is correct.
 
-This package is private at version 0.1.0. It supports Node.js 24 and ESM. It has no install script.
+This package is private at version 0.1.0. It supports Node.js 24 and ESM. It has no install script. The tarball bundles Ajv and its dependencies so a consuming project can install this version without registry access.
 
 ## Install and configure
 

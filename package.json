@@ -35,6 +35,9 @@
   "dependencies": {
     "ajv": "8.20.0"
   },
+  "bundleDependencies": [
+    "ajv"
+  ],
   "devDependencies": {
     "typescript": "5.9.3",
     "@types/node": "24.13.6"
